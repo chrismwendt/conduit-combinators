@@ -142,6 +142,7 @@ module Data.Conduit.Combinators
     , concatMapAccum
     , intersperse
     , slidingWindow
+    , chunksOf
 
       -- *** Binary base encoding
     , encodeBase64
@@ -1436,6 +1437,19 @@ slidingWindow sz = go (if sz <= 0 then 1 else sz) mempty
                      case m of
                        Nothing -> yield st
                        Just x -> go (n-1) (Seq.snoc st x)
+
+-- | Chunk input into lists
+-- 1,2,3,4,5 with size 2 gives [1,2],[3,4],[5]
+--
+-- Since 1.0.0
+chunksOf :: Monad m => Int -> C.Conduit a m [a]
+chunksOf 0 = return ()
+chunksOf n = loop
+    where
+    loop = do
+        l <- C.take n C.=$= C.sinkList
+        when ((not . null) l) $ C.yield l
+        when (length l == n) loop
 
 codeWith :: Monad m
          => Int

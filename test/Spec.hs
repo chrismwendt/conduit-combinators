@@ -611,6 +611,27 @@ main = hspec $ do
     it "slidingWindow 6" $
         let res = runIdentity $ yieldMany [1..5] $= slidingWindow 6 $$ sinkList
         in res `shouldBe` [[1,2,3,4,5]]
+    it "chunksOf 0" $
+        let res = runIdentity $ yieldMany [1..5] $= slidingWindow 0 $$ sinkList
+        in res `shouldBe` []
+    it "chunksOf 1" $
+        let res = runIdentity $ yieldMany [1..5] $= slidingWindow 1 $$ sinkList
+        in res `shouldBe` [[1],[2],[3],[4],[5]]
+    it "chunksOf 2" $
+        let res = runIdentity $ yieldMany [1..5] $= slidingWindow 2 $$ sinkList
+        in res `shouldBe` [[1,2],[3,4],[5]]
+    it "chunksOf 3" $
+        let res = runIdentity $ yieldMany [1..5] $= slidingWindow 3 $$ sinkList
+        in res `shouldBe` [[1,2,3],[4,5]]
+    it "chunksOf 4" $
+        let res = runIdentity $ yieldMany [1..5] $= slidingWindow 4 $$ sinkList
+        in res `shouldBe` [[1,2,3,4],[5]]
+    it "chunksOf 5" $
+        let res = runIdentity $ yieldMany [1..5] $= slidingWindow 5 $$ sinkList
+        in res `shouldBe` [[1,2,3,4,5]]
+    it "chunksOf 6" $
+        let res = runIdentity $ yieldMany [1..5] $= slidingWindow 6 $$ sinkList
+        in res `shouldBe` [[1,2,3,4,5]]
     prop "vectorBuilder" $ \(values :: [[Int]]) ((+1) . (`mod` 30) . abs -> size) -> do
         let res = runST
                 $ yieldMany values
