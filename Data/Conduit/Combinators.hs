@@ -1443,13 +1443,11 @@ slidingWindow sz = go (if sz <= 0 then 1 else sz) mempty
 --
 -- Since 1.0.0
 chunksOf :: Monad m => Int -> C.Conduit a m [a]
-chunksOf 0 = return ()
 chunksOf n = loop
     where
     loop = do
         l <- C.take n C.=$= C.sinkList
-        when ((not . null) l) $ C.yield l
-        when (length l == n) loop
+        unless (null l) $ C.yield l >> loop
 
 codeWith :: Monad m
          => Int
